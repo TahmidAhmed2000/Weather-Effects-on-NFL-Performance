@@ -61,6 +61,9 @@ url_weathergitdata <- read_csv(url(url_weathergit))
 # creating plot of weather impact on Tom Brady during Postseason
 EM_regular <- url_qbweatherdata %>%
 filter(name == "Manning, Eli", season == "Regular Season")
+```
+
+```{r EMplot, echo=FALSE}
 EM_regularplot <- url_qbweatherdata %>%
 filter(name == "Manning, Eli", season == "Regular Season") %>%
   ggplot(aes(avg_temp, yards)) +
@@ -71,10 +74,7 @@ filter(name == "Manning, Eli", season == "Regular Season") %>%
   labs(subtitle = "At start of career to 2017") +
   ylab("Yards") +
   xlab("Temperature")
-```
-
-```{r ggsavep1, message=FALSE}
-ggsave(EM_regularplot, filename = "ms_6_shiny/EMreg.png")
+EM_regularplot
 ```
 
 
@@ -88,6 +88,7 @@ filter(name == "Brady, Tom", season == "Postseason") %>%
   labs(subtitle = "At start of career to 2017") +
   ylab("Completion Percentage") +
   xlab("Temperature")
+TB_postplot
 ```
 
 ```{r, echo=FALSE}
