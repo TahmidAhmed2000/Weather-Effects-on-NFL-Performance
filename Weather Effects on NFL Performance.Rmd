@@ -1,0 +1,103 @@
+---
+title: "Weather Effects on NFL Performance"
+author: "Tahmid Ahmed"
+date: "4/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+library(readr)
+library(tidyverse)
+library(janitor)
+library(reprex)
+library(gt)
+library(rvest)
+library(xml2)
+library(magrittr)
+```
+
+```{r kicker, echo=FALSE, include=FALSE}
+# Downloading Kicker Data
+url_kickers = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/Game_Logs_Kickers.csv"
+url_kickerdata <- read_csv(url(url_kickers)) %>%
+  clean_names()
+url_kickerdata
+```
+
+```{r qb, echo=FALSE, include=FALSE}
+# Downloading qb data
+url_qb = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/Game_Logs_Quarterback.csv"
+url_qbdata <- read_csv(url(url_qb))
+```
+
+```{r rb, include = FALSE, echo = FALSE}
+# Downloading rb data
+url_rb = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/Game_Logs_Runningback.csv"
+url_rbdata <- read_csv(url(url_rb))
+```
+
+```{r weather, include = FALSE, echo = FALSE}
+# downloading weather data
+weather <- read_csv('raw-data/weather_20131231.csv',
+                    na = c("undefined", "")) %>%
+clean_names()
+weather
+```
+
+```{r qbweather, include = FALSE, echo = FALSE}
+# Qb and weather data merged
+url_qbweather = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/QB_weather_cleaned.csv"
+url_qbweatherdata <- read_csv(url(url_qbweather))
+url_qbweatherdata
+```
+
+```{r weat, include = FALSE, echo = FALSE}
+# weather in all games 
+url_weathergit = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/all_games_weather.csv"
+url_weathergitdata <- read_csv(url(url_weathergit))
+```
+
+```{r EM, echo = FALSE}
+# creating plot of weather impact on Tom Brady during Postseason
+EM_regular <- url_qbweatherdata %>%
+filter(name == "Manning, Eli", season == "Regular Season")
+EM_regularplot <- url_qbweatherdata %>%
+filter(name == "Manning, Eli", season == "Regular Season") %>%
+  ggplot(aes(avg_temp, yards)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_classic() +
+  labs(title = "Weather Impact on Eli Manning's Yardage During the Regular Season") +
+  labs(subtitle = "At start of career to 2017") +
+  ylab("Yards") +
+  xlab("Temperature")
+```
+
+```{r ggsavep1, message=FALSE}
+ggsave(EM_regularplot, filename = "ms_6_shiny/EMreg.png")
+```
+
+
+```{r TB, echo = FALSE}
+TB_postplot <- url_qbweatherdata %>%
+filter(name == "Brady, Tom", season == "Postseason") %>%
+  ggplot(aes(avg_temp, comp_percent)) +
+  geom_line() +
+  theme_classic() +
+  labs(title = "Weather Impact on Tom Brady's Accuracy During the Postseason") +
+  labs(subtitle = "At start of career to 2017") +
+  ylab("Completion Percentage") +
+  xlab("Temperature")
+```
+
+```{r, echo=FALSE}
+russell_wilson <- read_html("https://sports.yahoo.com/nfl/players/25785/gamelog?selectedTable=0&season=2016")
+tab <- russell_wilson %>%
+  html_nodes("table")
+tab <- tab[1] %>%
+  html_table()
+russell_wilson <- view(tab[[1]])
+```
+
+
+
